@@ -1,0 +1,19 @@
+{
+  "name": "Shelf",
+  "short_name": "Shelf",
+  "description": "Discover books, organize reading shelves, track progress, and reflect on what you read.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF6EF",
+  "theme_color": "#B8542A",
+  "categories": ["books", "education", "lifestyle"],
+  "icons": [
+    {
+      "src": "https://base44.com/logo_v2.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

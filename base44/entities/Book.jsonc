@@ -1,0 +1,71 @@
+{
+  "name": "Book",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "cover_url": {
+      "type": "string"
+    },
+    "olid": {
+      "type": "string",
+      "description": "Open Library cover ID"
+    },
+    "work_key": {
+      "type": "string",
+      "description": "Open Library work key, e.g. /works/OL12345W"
+    },
+    "description": {
+      "type": "string"
+    },
+    "published_year": {
+      "type": "number"
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "shelf": {
+      "type": "string",
+      "enum": [
+        "want_to_read",
+        "reading",
+        "finished"
+      ],
+      "default": "want_to_read"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 0
+    },
+    "progress": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 0
+    },
+    "notes": {
+      "type": "string"
+    },
+    "started_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "finished_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "title",
+    "shelf"
+  ]
+}
