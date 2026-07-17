@@ -12,6 +12,7 @@ import Home from "@/pages/Home";
 import Discover from "@/pages/Discover";
 import ShelfPage from "@/pages/Shelf";
 import BookDetail from "@/pages/BookDetail";
+import Docs from "@/pages/Docs";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -45,6 +46,7 @@ const AuthenticatedApp = () => {
         <Route path="/discover" element={<Discover />} />
         <Route path="/shelf" element={<ShelfPage />} />
         <Route path="/book/:id" element={<BookDetail />} />
+        <Route path="/docs" element={<Docs />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
