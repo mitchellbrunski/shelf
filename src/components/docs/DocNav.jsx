@@ -3,7 +3,8 @@ const ITEMS = [
   { id: "research", label: "UX Research & Planning", desc: "Audience, problem, personas, competitive review, user flow" },
   { id: "testing", label: "Usability Testing", desc: "Test plan, results, and revisions" },
   { id: "readme", label: "Technical README", desc: "How it works, tools, API, credits" },
-  { id: "reflection", label: "Reflection & Case Study", desc: "Process, learning, and growth" }
+  { id: "reflection", label: "Reflection & Case Study", desc: "Process, learning, and growth" },
+  { id: "wireframes", label: "Wireframes & Flow", desc: "Design artifacts and user-flow diagram" }
 ];
 
 export default function DocNav({ active, onSelect }) {

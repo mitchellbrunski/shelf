@@ -5,13 +5,17 @@ import Research from "@/components/docs/Research";
 import Testing from "@/components/docs/Testing";
 import Readme from "@/components/docs/Readme";
 import Reflection from "@/components/docs/Reflection";
+import Wireframes from "@/components/docs/Wireframes";
+import DownloadButton from "@/components/docs/DownloadButton";
+import { getCombinedMarkdown, getSectionMarkdown } from "@/lib/docsContent";
 
 const SECTIONS = {
   proposal: { label: "Project Proposal", Component: Proposal },
   research: { label: "UX Research & Planning", Component: Research },
   testing: { label: "Usability Testing", Component: Testing },
   readme: { label: "Technical README", Component: Readme },
-  reflection: { label: "Reflection & Case Study", Component: Reflection }
+  reflection: { label: "Reflection & Case Study", Component: Reflection },
+  wireframes: { label: "Wireframes & Flow", Component: Wireframes }
 };
 
 export default function Docs() {
@@ -29,6 +33,18 @@ export default function Docs() {
           The complete UX 440 deliverable set: the instructor-approved proposal, research and planning,
           usability testing, technical README, and a reflective case study.
         </p>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <DownloadButton
+            label="Download all documentation (.md)"
+            filename="Shelf-Documentation.md"
+            content={getCombinedMarkdown()}
+          />
+          <DownloadButton
+            label={`Download this section (.md)`}
+            filename={`Shelf-${active}.md`}
+            content={getSectionMarkdown(active)}
+          />
+        </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
