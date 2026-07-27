@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shelf — Figma Design Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* ===== Shelf Design System / Style Tokens =====
+     Mirrors src/index.css so Figma frames match the live PWA exactly.
+     Colors are HSL channels from the app's CSS variables. */
+  :root {
+    --background: #F5F2EB;
+    --foreground: #2B2520;
+    --card: #FDFAF4;
+    --primary: #B8542A;
+    --primary-foreground: #FDFAF4;
+    --secondary: #E8E2D8;
+    --muted: #ECE7DE;
+    --muted-foreground: #8A8175;
+    --accent: #F4EDE0;
+    --border: #DDD5C7;
+    --shelf-want: #E0920F;
+    --shelf-reading: #2E76A6;
+    --shelf-finished: #2E9E5C;
+    --font-heading: "Fraunces", Georgia, serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: #E4DECF;
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    padding: 48px 32px;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--font-heading); }
+
+  .page-head { max-width: 980px; margin: 0 auto 40px; }
+  .page-head h1 { font-size: 30px; font-weight: 600; }
+  .page-head p { color: #5c5345; font-size: 14px; margin-top: 8px; max-width: 620px; line-height: 1.6; }
+  .page-head .tag { display:inline-block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
+
+  .canvas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+
+  .screen { width: 375px; }
+  .screen-label { text-align: center; margin-bottom: 12px; }
+  .screen-label .num { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--primary); }
+  .screen-label .name { font-family: var(--font-heading); font-size: 17px; font-weight: 600; color: var(--foreground); }
+
+  /* Phone frame — mobile-first 375x812 */
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: var(--background);
+    border-radius: 38px;
+    border: 9px solid #1c1a17;
+    box-shadow: 0 24px 50px rgba(0,0,0,.28);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone .statusbar {
+    height: 34px; flex: 0 0 34px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 22px;
+    font-size: 13px; font-weight: 600; color: var(--foreground);
+  }
+  .phone .statusbar .right { display:flex; gap:6px; align-items:center; }
+  .phone .statusbar .dot { width:5px;height:5px;border-radius:50%; background: var(--foreground); }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 8px 20px 100px; }
+  .scroll::-webkit-scrollbar { display: none; }
+
+  /* ===== Reusable component system: cards, buttons, badges, nav ===== */
+  .appbar { display:flex; align-items:center; justify-content:space-between; padding: 6px 2px 18px; }
+  .appbar .brand { font-family: var(--font-heading); font-size: 24px; font-weight: 600; }
+  .appbar .brand .accent { color: var(--primary); }
+  .icon-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); display:flex; align-items:center; justify-content:center; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 18px; border-radius: var(--radius); font-weight: 600; font-size: 14px;
+    border: 1px solid transparent; cursor: pointer; text-decoration: none;
+  }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+  .btn-ghost { background: var(--card); color: var(--foreground); border-color: var(--border); }
+  .btn-sm { padding: 8px 12px; font-size: 12px; }
+
+  .badge {
+    display:inline-flex; align-items:center; gap:6px;
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  }
+  .badge-want { background: rgba(224,146,15,.16); color: #9a6700; }
+  .badge-reading { background: rgba(46,118,166,.16); color: #2E76A6; }
+  .badge-finished { background: rgba(46,158,92,.16); color: #257a45; }
+  .badge .pip { width:7px;height:7px;border-radius:50%; }
+  .badge-want .pip { background: var(--shelf-want); }
+  .badge-reading .pip { background: var(--shelf-reading); }
+  .badge-finished .pip { background: var(--shelf-finished); }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px;
+  }
+
+  .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary); }
+  .section-title { font-family: var(--font-heading); font-size: 18px; font-weight: 600; margin: 18px 0 12px; }
+  .muted { color: var(--muted-foreground); }
+
+  /* Bottom nav (reusable) */
+  .tabbar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 78px; background: var(--card); border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; align-items: flex-start;
+    padding-top: 12px;
+  }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:5px; color: var(--muted-foreground); font-size: 10px; font-weight: 600; }
+  .tab.active { color: var(--primary); }
+  .tab .ico { width: 24px; height: 24px; border-radius: 8px; background: currentColor; opacity: .85; }
+  .tab.active .ico { opacity: 1; }
+
+  /* Book cover placeholder */
+  .cover {
+    aspect-ratio: 2/3; border-radius: 8px;
+    background: linear-gradient(135deg, #c79a5e, #8a5a2b);
+    display:flex; align-items:flex-end; padding: 10px;
+    color: #fdf6e6; font-family: var(--font-heading); font-size: 12px; font-weight: 600; line-height: 1.2;
+  }
+  .cover.b { background: linear-gradient(135deg,#2E76A6,#1c4d70); }
+  .cover.c { background: linear-gradient(135deg,#2E9E5C,#1d6b3d); }
+  .cover.d { background: linear-gradient(135deg,#7a4a8c,#4a2c5a); }
+  .cover.e { background: linear-gradient(135deg,#c0392b,#7a1f15); }
+
+  .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+
+  /* Stats */
+  .stats { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .stat { background: var(--card); border:1px solid var(--border); border-radius: 12px; padding: 14px 10px; text-align:center; }
+  .stat .n { font-family: var(--font-heading); font-size: 24px; font-weight: 600; color: var(--primary); }
+  .stat .l { font-size: 10px; color: var(--muted-foreground); margin-top: 2px; }
+
+  /* Search bar */
+  .search { display:flex; align-items:center; gap:10px; background: var(--card); border:1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .search .glyph { width:16px;height:16px;border-radius:50%; border:2px solid var(--muted-foreground); position:relative; }
+  .search .glyph::after { content:""; position:absolute; left:11px; top:11px; width:8px;height:2px; background: var(--muted-foreground); transform:rotate(45deg); }
+  .search input { border:none; background:transparent; font-size:14px; color: var(--foreground); flex:1; outline:none; }
+
+  .chips { display:flex; gap:8px; overflow-x:auto; padding: 14px 0 4px; }
+  .chip { white-space:nowrap; padding: 7px 14px; border-radius:999px; background: var(--accent); border:1px solid var(--border); font-size:12px; font-weight:600; color: var(--foreground); }
+  .chip.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+
+  /* Star rating */
+  .stars { display:flex; gap:2px; }
+  .star { width:18px;height:18px; clip-path: polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); background: #d8cfbf; }
+  .star.on { background: #E0920F; }
+
+  /* Progress */
+  .track { height:8px; border-radius:999px; background: var(--secondary); overflow:hidden; }
+  .track > i { display:block; height:100%; background: var(--primary); border-radius:999px; }
+
+  /* Detail hero */
+  .hero { display:flex; gap:16px; align-items:flex-end; }
+  .hero .cover { width: 130px; flex: 0 0 130px; }
+  .hero .meta h2 { font-size: 20px; line-height: 1.15; margin-bottom: 4px; }
+  .hero .meta .by { font-size: 13px; color: var(--muted-foreground); margin-bottom: 10px; }
+
+  .shelf-tabs { display:flex; gap:6px; background: var(--muted); padding:5px; border-radius: 12px; margin-bottom: 16px; }
+  .shelf-tab { flex:1; text-align:center; padding: 9px 4px; border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--muted-foreground); }
+  .shelf-tab.active { background: var(--card); color: var(--foreground); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+  .row-book { display:flex; gap:14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .row-book .cover { width:54px; flex:0 0 54px; font-size:0; }
+
+  /* Empty / onboarding */
+  .empty { text-align:center; padding: 70px 24px 0; display:flex; flex-direction:column; align-items:center; }
+  .empty .glyph { width: 84px; height: 84px; border-radius: 24px; background: var(--accent); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; margin-bottom: 22px; }
+  .empty .glyph .book { width:38px;height:30px;border-radius:3px; background: var(--primary); }
+  .empty h2 { font-size: 24px; margin-bottom: 10px; }
+  .empty p { color: var(--muted-foreground); font-size: 14px; line-height: 1.6; max-width: 240px; margin-bottom: 24px; }
+
+  .list-item { display:flex; align-items:center; gap:14px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+  .list-item .pip { width:10px;height:10px;border-radius:50%; }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <span class="tag">UX 440 · Figma Design Prototype</span>
+  <h1>Shelf — Book Discovery &amp; Reading Log</h1>
+  <p>Mobile-first design prototype showing six core screens/states of the Shelf PWA. Built from the app's live design tokens (Fraunces + Inter, terracotta primary #B8542A) so Figma frames match the shipped product. Import this file with a Figma HTML plugin such as <strong>html.to.design</strong>, or recreate the frames using the style system below.</p>
+</div>
+
+<div class="canvas">
+
+  <!-- ============ SCREEN 1: HOME / DASHBOARD ============ -->
+  <div class="screen">
+    <div class="screen-label"><div class="num">Screen 01</div><div class="name">Home — Reading Dashboard</div></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><div class="right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+      <div class="scroll">
+        <div class="appbar">
+          <div class="brand">Shelf<span class="accent">.</span></div>
+          <div class="icon-btn"></div>
+        </div>
+
+        <p class="eyebrow">Sunday · July 26</p>
+        <h3 style="font-size:26px;font-weight:600;line-height:1.15;margin:4px 0 18px;">Welcome back, Sam</h3>
+
+        <div class="stats">
+          <div class="stat"><div class="n">12</div><div class="l">Want to Read</div></div>
+          <div class="stat"><div class="n">3</div><div class="l">Reading</div></div>
+          <div class="stat"><div class="n">8</div><div class="l">Finished</div></div>
+        </div>
+
+        <div class="section-title">Currently Reading</div>
+        <div class="card">
+          <div class="hero">
+            <div class="cover b">The Pragmatic Programmer</div>
+            <div class="meta">
+              <span class="badge badge-reading"><span class="pip"></span>Reading</span>
+              <h2 style="margin-top:8px;font-size:16px;">The Pragmatic Programmer</h2>
+              <div class="by">Hunt &amp; Thomas</div>
+              <div class="stars" style="margin:8px 0;">
+                <span class="star on"></span><span class="star on"></span><span class="star on"></span><span class="star on"></span><span class="star"></span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+              <span class="muted">Progress</span><span style="font-weight:600;">64%</span>
+            </div>
+            <div class="track"><i style="width:64%"></i></div>
+          </div>
+        </div>
+
+        <div class="section-title">Recently Added</div>
+        <div class="grid-3">
+          <div class="cover">Atomic Habits</div>
+          <div class="cover c">Deep Work</div>
+          <div class="cover d">Sapiens</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab active"><div class="ico"></div>Home</div>
+        <div class="tab"><div class="ico"></div>Discover</div>
+        <div class="tab"><div class="ico"></div>Shelf</div>
+        <div class="tab"><div class="ico"></div>Docs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 2: DISCOVER / SEARCH ============ -->
+  <div class="screen">
+    <div class="screen-label"><div class="num">Screen 02</div><div class="name">Discover — Search Open Library</div></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><div class="right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+      <div class="scroll">
+        <div class="appbar"><div class="brand">Discover</div><div class="icon-btn"></div></div>
+
+        <div class="search">
+          <div class="glyph"></div>
+          <input placeholder="Search by title, author, or topic…" />
+        </div>
+
+        <div class="chips">
+          <div class="chip active">All</div>
+          <div class="chip">Fiction</div>
+          <div class="chip">Design</div>
+          <div class="chip">History</div>
+          <div class="chip">Science</div>
+        </div>
+
+        <div class="section-title">Results for "design"</div>
+        <div class="grid-2">
+          <div>
+            <div class="cover">The Design of Everyday Things</div>
+            <div style="font-size:13px;font-weight:600;margin-top:8px;line-height:1.25;">The Design of Everyday Things</div>
+            <div class="muted" style="font-size:11px;">Donald Norman</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;">Save to Shelf</button>
+          </div>
+          <div>
+            <div class="cover d">Don't Make Me Think</div>
+            <div style="font-size:13px;font-weight:600;margin-top:8px;line-height:1.25;">Don't Make Me Think</div>
+            <div class="muted" style="font-size:11px;">Steve Krug</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%;">On Shelf ✓</button>
+          </div>
+          <div>
+            <div class="cover e">Refactoring UI</div>
+            <div style="font-size:13px;font-weight:600;margin-top:8px;line-height:1.25;">Refactoring UI</div>
+            <div class="muted" style="font-size:11px;">Wathan &amp; Schoger</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;">Save to Shelf</button>
+          </div>
+          <div>
+            <div class="cover b">100 Things Every Designer…</div>
+            <div style="font-size:13px;font-weight:600;margin-top:8px;line-height:1.25;">100 Things Every Designer Needs to Know</div>
+            <div class="muted" style="font-size:11px;">Susan Weinschenk</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;">Save to Shelf</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ico"></div>Home</div>
+        <div class="tab active"><div class="ico"></div>Discover</div>
+        <div class="tab"><div class="ico"></div>Shelf</div>
+        <div class="tab"><div class="ico"></div>Docs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3: SHELF ============ -->
+  <div class="screen">
+    <div class="screen-label"><div class="num">Screen 03</div><div class="name">Shelf — Organized Reading Lists</div></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><div class="right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+      <div class="scroll">
+        <div class="appbar"><div class="brand">My Shelf</div><div class="icon-btn"></div></div>
+
+        <div class="shelf-tabs">
+          <div class="shelf-tab">Want to Read</div>
+          <div class="shelf-tab active">Reading</div>
+          <div class="shelf-tab">Finished</div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-foreground);">Sort by</div>
+          <div style="font-weight:600;margin-top:2px;">Recently started ▾</div>
+        </div>
+
+        <div class="row-book">
+          <div class="cover b">The Pragmatic Programmer</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;line-height:1.25;">The Pragmatic Programmer</div>
+            <div class="muted" style="font-size:12px;">Hunt &amp; Thomas</div>
+            <span class="badge badge-reading" style="margin-top:8px;"><span class="pip"></span>Reading · 64%</span>
+          </div>
+        </div>
+        <div class="row-book">
+          <div class="cover c">Deep Work</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;line-height:1.25;">Deep Work</div>
+            <div class="muted" style="font-size:12px;">Cal Newport</div>
+            <span class="badge badge-reading" style="margin-top:8px;"><span class="pip"></span>Reading · 28%</span>
+          </div>
+        </div>
+        <div class="row-book" style="border-bottom:none;">
+          <div class="cover d">Sapiens</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;line-height:1.25;">Sapiens</div>
+            <div class="muted" style="font-size:12px;">Yuval Noah Harari</div>
+            <span class="badge badge-reading" style="margin-top:8px;"><span class="pip"></span>Reading · 90%</span>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ico"></div>Home</div>
+        <div class="tab"><div class="ico"></div>Discover</div>
+        <div class="tab active"><div class="ico"></div>Shelf</div>
+        <div class="tab"><div class="ico"></div>Docs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 4: BOOK DETAIL ============ -->
+  <div class="screen">
+    <div class="screen-label"><div class="num">Screen 04</div><div class="name">Book Detail — Rate, Track, Reflect</div></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><div class="right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+      <div class="scroll">
+        <div class="appbar"><div class="icon-btn"></div><div class="icon-btn"></div></div>
+
+        <div class="hero">
+          <div class="cover b">The Pragmatic Programmer</div>
+          <div class="meta">
+            <span class="badge badge-reading"><span class="pip"></span>Reading</span>
+            <h2>The Pragmatic Programmer</h2>
+            <div class="by">Dave Thomas &amp; Andy Hunt · 1999</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:8px;">Your Rating</div>
+          <div class="stars" style="gap:6px;">
+            <span class="star on" style="width:26px;height:26px;"></span>
+            <span class="star on" style="width:26px;height:26px;"></span>
+            <span class="star on" style="width:26px;height:26px;"></span>
+            <span class="star on" style="width:26px;height:26px;"></span>
+            <span class="star" style="width:26px;height:26px;"></span>
+          </div>
+          <div style="height:1px;background:var(--border);margin:16px 0;"></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+            <span style="font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);">Progress</span>
+            <span style="font-weight:600;">64%</span>
+          </div>
+          <div class="track"><i style="width:64%"></i></div>
+        </div>
+
+        <div class="section-title">About this book</div>
+        <p class="muted" style="font-size:13px;line-height:1.65;">A timeless classic on how to write software with clarity, discipline, and pride. Straightforward advice that bridges craft and pragmatism for working programmers.</p>
+
+        <div class="section-title">Reflections</div>
+        <div class="card" style="background:var(--accent);">
+          <p style="font-size:13px;line-height:1.6;color:var(--foreground);">Chapters on broken windows and DRY completely changed how I think about code ownership…</p>
+          <div class="muted" style="font-size:11px;margin-top:10px;">Auto-saved · just now</div>
+        </div>
+
+        <button class="btn btn-ghost" style="width:100%;margin-top:14px;color:#a23a23;border-color:#e3b9a4;">Move to Finished</button>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ico"></div>Home</div>
+        <div class="tab"><div class="ico"></div>Discover</div>
+        <div class="tab active"><div class="ico"></div>Shelf</div>
+        <div class="tab"><div class="ico"></div>Docs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 5: EMPTY / ONBOARDING STATE ============ -->
+  <div class="screen">
+    <div class="screen-label"><div class="num">Screen 05</div><div class="name">Empty State — First-run Welcome</div></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><div class="right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+      <div class="scroll">
+        <div class="appbar"><div class="brand">Shelf<span class="accent">.</span></div></div>
+        <div class="empty">
+          <div class="glyph"><div class="book"></div></div>
+          <h2>Your shelf is empty</h2>
+          <p>Search millions of real books and start building your reading life. Save your first title to get going.</p>
+          <button class="btn btn-primary" style="width:100%;">Discover your first book</button>
+          <div class="muted" style="font-size:11px;margin-top:16px;">No sign-up needed · works offline</div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab active"><div class="ico"></div>Home</div>
+        <div class="tab"><div class="ico"></div>Discover</div>
+        <div class="tab"><div class="ico"></div>Shelf</div>
+        <div class="tab"><div class="ico"></div>Docs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 6: DOCS ============ -->
+  <div class="screen">
+    <div class="screen-label"><div class="num">Screen 06</div><div class="name">Documentation — Deliverables Hub</div></div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><div class="right"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+      <div class="scroll">
+        <div class="appbar"><div class="brand">Docs</div><div class="icon-btn"></div></div>
+
+        <span class="eyebrow">Documentation</span>
+        <h3 style="font-size:24px;font-weight:600;margin:4px 0 8px;">Project Documentation</h3>
+        <p class="muted" style="font-size:13px;line-height:1.6;">The complete UX 440 deliverable set: proposal, research, testing, README, and case study.</p>
+
+        <div style="display:flex;gap:8px;margin:16px 0;">
+          <button class="btn btn-primary btn-sm" style="flex:1;">Download all (.md)</button>
+          <button class="btn btn-ghost btn-sm" style="flex:1;">This section</button>
+        </div>
+
+        <div class="list-item">
+          <div class="pip" style="background:var(--primary);"></div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Project Proposal</div>
+            <div class="muted" style="font-size:12px;">Instructor-approved overview</div>
+          </div>
+        </div>
+        <div class="list-item">
+          <div class="pip" style="background:var(--shelf-reading);"></div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">UX Research &amp; Planning</div>
+            <div class="muted" style="font-size:12px;">Personas, flow, competitive review</div>
+          </div>
+        </div>
+        <div class="list-item">
+          <div class="pip" style="background:var(--shelf-finished);"></div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Usability Testing</div>
+            <div class="muted" style="font-size:12px;">Test plan, results, revisions</div>
+          </div>
+        </div>
+        <div class="list-item" style="border-bottom:none;">
+          <div class="pip" style="background:var(--shelf-want);"></div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">Reflection &amp; Case Study</div>
+            <div class="muted" style="font-size:12px;">Process, learning, and growth</div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ico"></div>Home</div>
+        <div class="tab"><div class="ico"></div>Discover</div>
+        <div class="tab"><div class="ico"></div>Shelf</div>
+        <div class="tab active"><div class="ico"></div>Docs</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
