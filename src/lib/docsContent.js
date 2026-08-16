@@ -165,6 +165,90 @@ The app is fully responsive and can be installed as a PWA from a mobile or deskt
 - **Icons:** lucide-react
 - **Platform & scaffold:** Base44 (database, serverless functions, build tooling)`;
 
+const ARCHITECTURE = `# Technical Architecture
+
+## Overview
+Shelf is a Progressive Web App for discovering, saving, and reflecting on books. A user searches a live catalog of millions of real titles, saves books to one of three shelves (Want to Read, Reading, Finished), tracks reading progress, rates finished books on a five-star scale, and writes auto-saving reflection notes. Discovery is powered by the Open Library API; reliable cover art is supplied by the Google Books API. All book data is persisted in a hosted database through the Base44 backend-as-a-service platform.
+
+## Technology Stack
+| Area | Detail |
+|---|---|
+| Front-end framework | React 18 with React Router for navigation, Tailwind CSS for styling, Vite as the build tool. |
+| UI components | shadcn/ui (Radix UI primitives) plus custom components for book covers, star ratings, shelf badges, and the reading dashboard. |
+| Charts | Recharts — reading-progress and genre-distribution bar charts. |
+| Icons | lucide-react. |
+| Typography | Fraunces (display/headings) and Inter (body) via Google Fonts. |
+| Back-end platform | Base44 backend-as-a-service — database, serverless functions, managed auth, file storage, build/hosting. |
+| PWA | Web manifest (\`public/manifest.json\`) and service worker (\`public/sw.js\`). |
+
+## External APIs
+Both APIs are called server-side from backend functions to avoid browser CORS issues.
+
+### 1. Open Library API
+- Base URL: \`https://openlibrary.org\`
+- Search endpoint: \`/search.json?q=…&page=…&fields=…\` — discovers titles by title, author, or topic. Returns paginated results with cover IDs, OLIDs, and work keys. No API key required.
+- Works endpoint: \`/works/{work_key}.json\` — fetches a book's full description and subject list. Queried lazily on first detail-page open.
+- Used by: \`searchBooks\` and \`getBookDetails\`.
+
+### 2. Google Books API
+- Base URL: \`https://www.googleapis.com/books/v1\`
+- Volumes endpoint: \`/volumes?q=…&maxResults=1&key=…\` — returns high-quality cover images (\`imageLinks.thumbnail\`). Requires the \`GOOGLE_BOOKS_API_KEY\` server secret.
+- Why it's used: Open Library's cover service proved unreliable (blank and 1×1 placeholders). Google Books provides dependable cover art.
+- Used by: \`refreshBookCovers\`.
+
+## Serverless Backend Functions
+Three HTTP handlers run on the Base44 runtime, each using the SDK's service-role client to read/write the \`Book\` entity.
+
+| Function | Responsibility |
+|---|---|
+| \`searchBooks\` | Queries the Open Library Search endpoint, normalizes results into the app's book shape (title, author, cover URL, OLID, work key, subjects), returns paginated metadata. Called by the Discover page. |
+| \`getBookDetails\` | Given a work key, fetches the Open Library Works endpoint for description and subjects, persists them onto the saved Book record so repeat visits are instant. Called by the Book Detail page. |
+| \`refreshBookCovers\` | Iterates every Book record, queries Google Books with a multi-step search fallback (intitle+inauthor → title+author → title), upgrades the image to HTTPS and a crisper zoom, and writes the cover URL back. Re-run any time to fill missing covers. |
+
+## Data Model — the Book Entity
+All saved books are records of a single \`Book\` entity. Custom fields (every record also has built-in \`id\`, \`created_date\`, \`updated_date\`, \`created_by_id\`):
+
+| Field | Type | Description |
+|---|---|---|
+| \`title\` | string (required) | The book's title. |
+| \`author\` | string | Primary author. |
+| \`cover_url\` | string | Cover image URL (sourced from Google Books). |
+| \`olid\` | string | Open Library cover/edition ID. |
+| \`work_key\` | string | Open Library work key, e.g. /works/OL12345W. |
+| \`description\` | string | Synopsis fetched from the Works endpoint. |
+| \`published_year\` | number | Year of publication. |
+| \`subjects\` | array<string> | Genre/subject tags, used by the genre chart. |
+| \`shelf\` | enum | want_to_read · reading · finished (default want_to_read). |
+| \`rating\` | number 0–5 | User's star rating (default 0). |
+| \`progress\` | number 0–100 | Reading progress percentage (default 0). |
+| \`notes\` | string | Personal reflection, auto-saved. |
+| \`started_date\` | date | When the user began reading. |
+| \`finished_date\` | date | When the user finished. |
+
+## Front-End Architecture
+- **Pages:** Home (stats + reading dashboard + recent), Discover (live search), Shelf (filter/sort), Book Detail (shelf, rating, progress, notes), Documentation.
+- **Layout:** A shared \`Layout\` provides a sticky header with desktop nav and a mobile bottom navigation bar; nested routes render via \`<Outlet />\`.
+- **Book covers:** A \`BookCover\` component renders cover images and detects blank/broken images, falling back to a styled placeholder.
+- **Reading dashboard:** A \`ReadingCharts\` component renders two Recharts bar charts — reading progress per in-progress book, and book distribution by genre.
+- **Design system:** Color and typography tokens live in \`src/index.css\` and are mapped to Tailwind classes in \`tailwind.config.js\`, including dedicated shelf-color tokens.
+
+## PWA & Offline Behavior
+- A web manifest defines the app name, theme color, display mode, and icons, making Shelf installable on mobile and desktop.
+- A service worker caches the app shell so the interface loads without a network.
+- Live API searches and saved-book changes still require a network connection; the backend runtime is hosted and not exportable for fully offline self-hosting.
+
+## How to Run Locally
+1. Install dependencies with \`npm install\`.
+2. Configure the Base44 environment variables (see \`LOCAL_SETUP.md\`).
+3. Start the dev server with \`npm run dev\` and open the printed local URL.
+4. The \`GOOGLE_BOOKS_API_KEY\` server secret must be set for the cover-sync function to work.
+
+## Known Limitations
+- The shared bookshelf is visible across the app; a production version would scope data per user with row-level security.
+- Cover art depends on the Google Books API; titles with no registered cover show a styled placeholder.
+- The backend runtime (database and functions) is hosted and cannot be exported for fully offline self-hosting.
+- There is no sorting or filtering within Discover search results.`;
+
 const REFLECTION = `# Reflection & Case Study
 
 The problem Shelf addresses is a small but real one: readers discover books constantly and remember almost none of them. A friend mentions a novel, a newsletter recommends a memoir, a podcast cites a biography — and a week later the title is gone. Shelf was built to be the quiet, purpose-built place where those titles land, where reading becomes visible, and where reflection has a home. I chose this problem because it is one I experience myself, and because solving it well requires exactly the skills UX 440 asks for: understanding a user, designing a focused flow, testing it, and building something that works with real data.
@@ -211,6 +295,7 @@ export const DOC_SECTIONS = [
   { id: "research", title: "UX Research & Planning", markdown: RESEARCH },
   { id: "testing", title: "Usability Testing", markdown: TESTING },
   { id: "readme", title: "Technical README", markdown: README },
+  { id: "architecture", title: "Technical Architecture", markdown: ARCHITECTURE },
   { id: "reflection", title: "Reflection & Case Study", markdown: REFLECTION },
   { id: "wireframes", title: "Wireframes & Flow", markdown: WIREFRAMES }
 ];

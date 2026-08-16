@@ -4,6 +4,7 @@ import Proposal from "@/components/docs/Proposal";
 import Research from "@/components/docs/Research";
 import Testing from "@/components/docs/Testing";
 import Readme from "@/components/docs/Readme";
+import Architecture from "@/components/docs/Architecture";
 import Reflection from "@/components/docs/Reflection";
 import Wireframes from "@/components/docs/Wireframes";
 import DownloadButton from "@/components/docs/DownloadButton";
@@ -14,6 +15,7 @@ const SECTIONS = {
   research: { label: "UX Research & Planning", Component: Research },
   testing: { label: "Usability Testing", Component: Testing },
   readme: { label: "Technical README", Component: Readme },
+  architecture: { label: "Technical Architecture", Component: Architecture },
   reflection: { label: "Reflection & Case Study", Component: Reflection },
   wireframes: { label: "Wireframes & Flow", Component: Wireframes }
 };

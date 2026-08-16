@@ -3,6 +3,7 @@ const ITEMS = [
   { id: "research", label: "UX Research & Planning", desc: "Audience, problem, personas, competitive review, user flow" },
   { id: "testing", label: "Usability Testing", desc: "Test plan, results, and revisions" },
   { id: "readme", label: "Technical README", desc: "How it works, tools, API, credits" },
+  { id: "architecture", label: "Technical Architecture", desc: "Stack, APIs, functions, data model, PWA" },
   { id: "reflection", label: "Reflection & Case Study", desc: "Process, learning, and growth" },
   { id: "wireframes", label: "Wireframes & Flow", desc: "Design artifacts and user-flow diagram" }
 ];
