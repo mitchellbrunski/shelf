@@ -6,6 +6,7 @@ import BookCard from "@/components/BookCard";
 import BookCover from "@/components/BookCover";
 import ShelfBadge from "@/components/ShelfBadge";
 import ReadingCharts from "@/components/ReadingCharts";
+import DocsPdfButton from "@/components/DocsPdfButton";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -69,11 +70,14 @@ export default function Home() {
 
   return (
     <div className="fade-in space-y-10">
-      <section>
-        <h1 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
-          Your reading world
-        </h1>
-        <p className="mt-1 text-muted-foreground">Track, rate, and reflect on the books in your life.</p>
+      <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
+            Your reading world
+          </h1>
+          <p className="mt-1 text-muted-foreground">Track, rate, and reflect on the books in your life.</p>
+        </div>
+        <DocsPdfButton />
       </section>
 
       {/* Stats */}

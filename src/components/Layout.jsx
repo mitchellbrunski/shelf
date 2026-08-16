@@ -1,11 +1,10 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { BookMarked, Compass, FileText, Home as HomeIcon, Library } from "lucide-react";
+import { BookMarked, Compass, Home as HomeIcon, Library } from "lucide-react";
 
 const NAV = [
   { to: "/", label: "Home", icon: HomeIcon },
   { to: "/discover", label: "Discover", icon: Compass },
-  { to: "/shelf", label: "My Shelf", icon: Library },
-  { to: "/docs", label: "Docs", icon: FileText }
+  { to: "/shelf", label: "My Shelf", icon: Library }
 ];
 
 export default function Layout() {
