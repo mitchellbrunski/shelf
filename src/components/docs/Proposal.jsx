@@ -40,13 +40,13 @@ export default function Proposal() {
           </ul>
         </Field>
         <Field label="6 · API or APIs">
-          The Open Library API — specifically the Search endpoint (<code className="rounded bg-muted px-1 text-xs">/search.json</code>) for discovering titles and the Works endpoint for retrieving book descriptions and subjects. No API key is required.
+          Two external APIs are used. The <strong>Open Library API</strong> — the Search endpoint (<code className="rounded bg-muted px-1 text-xs">/search.json</code>) for discovering titles and the Works endpoint for book descriptions and subjects — requires no key. The <strong>Google Books API</strong> supplies reliable book cover art via its <code className="rounded bg-muted px-1 text-xs">volumes</code> endpoint, using a free API key stored as a server secret.
         </Field>
         <Field label="7 · Database or Storage System">
           A persistent Book entity stored in the app's database (Base44's built-in database). Each saved book is a record with shelf status, rating, progress, notes, and dates — all created, updated, and retrieved through the data layer.
         </Field>
         <Field label="8 · Planned Development Tools">
-          React, Tailwind CSS, React Router, Base44 backend-as-a-service (database + server functions), Vite build tooling, and the Open Library REST API.
+          React, Tailwind CSS, React Router, Base44 backend-as-a-service (database + server functions), Vite build tooling, the Open Library REST API, and the Google Books API (for cover art).
         </Field>
         <Field label="9 · Expected Final Features">
           Book search with live cover art, three-tier shelf system, interactive star ratings, reading-progress tracking, auto-saving reflection notes, a reading-stats dashboard, shelf filtering and sorting, and a responsive mobile-first interface installable as a PWA.

@@ -27,13 +27,13 @@ Readers encounter book recommendations across many sources — friends, social m
 - Review a dashboard of reading activity and stats
 
 **6. API or APIs**
-The Open Library API — specifically the Search endpoint (/search.json) for discovering titles and the Works endpoint for retrieving book descriptions and subjects. No API key is required.
+Two external APIs are used. The Open Library API — the Search endpoint (/search.json) for discovering titles and the Works endpoint for book descriptions and subjects — requires no key. The Google Books API supplies reliable book cover art via its volumes endpoint, using a free API key stored as a server secret.
 
 **7. Database or Storage System**
 A persistent Book entity stored in the app's database (Base44's built-in database). Each saved book is a record with shelf status, rating, progress, notes, and dates — all created, updated, and retrieved through the data layer.
 
 **8. Planned Development Tools**
-React, Tailwind CSS, React Router, Base44 backend-as-a-service (database + server functions), Vite build tooling, and the Open Library REST API.
+React, Tailwind CSS, React Router, Base44 backend-as-a-service (database + server functions), Vite build tooling, the Open Library REST API, and the Google Books API (for cover art).
 
 **9. Expected Final Features**
 Book search with live cover art, three-tier shelf system, interactive star ratings, reading-progress tracking, auto-saving reflection notes, a reading-stats dashboard, shelf filtering and sorting, and a responsive mobile-first interface installable as a PWA.
@@ -145,20 +145,21 @@ The app is fully responsive and can be installed as a PWA from a mobile or deskt
 
 | Field | Detail |
 |---|---|
-| **API used** | Open Library API — Search endpoint (\`openlibrary.org/search.json\`) for discovering titles, and the Works endpoint for book descriptions and subjects. Accessed through two serverless backend functions (\`searchBooks\`, \`getBookDetails\`) to keep API calls server-side and avoid browser CORS issues. |
+| **APIs used** | Two external APIs. Open Library API — Search endpoint (\`openlibrary.org/search.json\`) for discovering titles, and the Works endpoint for book descriptions and subjects. Google Books API — the \`volumes\` endpoint for reliable book cover art, using a free API key stored as a server secret (\`GOOGLE_BOOKS_API_KEY\`). Accessed through three serverless backend functions (\`searchBooks\`, \`getBookDetails\`, \`refreshBookCovers\`) to keep API calls server-side and avoid browser CORS issues. |
 | **Database / storage** | A persistent \`Book\` entity in the app's built-in database (Base44). Every saved book is a record holding shelf status, rating, progress, notes, and dates, created/updated/retrieved through the data layer. |
 | **Front-end framework** | React with React Router for navigation, Tailwind CSS for styling, and Vite as the build tool. |
 | **Template / starter code** | Built on the Base44 application scaffold, which provides the Vite + React + Tailwind project structure, authentication boilerplate, and shadcn/ui component library. No external PWA template was used. |
-| **What was customized** | All pages (Home, Discover, Shelf, Book Detail, Documentation), the navigation layout, the Book data model, both backend functions, the warm "literary" design system (custom color tokens, Fraunces + Inter typography), reading-progress tracking, auto-saving notes, star-rating component, and the full documentation section were designed and written for this project. |
+| **What was customized** | All pages (Home, Discover, Shelf, Book Detail, Documentation), the navigation layout, the Book data model, all three backend functions, the warm "literary" design system (custom color tokens, Fraunces + Inter typography), reading-progress tracking, auto-saving notes, star-rating component, the book-cover fallback component, and the full documentation section were designed and written for this project. |
 
 ## Known Limitations & Unfinished Features
 - As a public app without per-user authentication, the shared bookshelf is visible to everyone — a real version would scope data to individual users.
-- Search results rely on the Open Library cover service, so titles without a registered cover show a styled placeholder.
+- Book covers are fetched from the Google Books API; titles with no registered cover show a styled placeholder. Cover URLs are synced server-side via the \`refreshBookCovers\` function.
 - Offline support caches the app shell; live API searches and saved-book changes still require a network connection.
 - No sorting or filtering within the Discover search results.
 
 ## Credits
-- **Book data & covers:** Open Library and its open data contributors — https://openlibrary.org
+- **Book data & descriptions:** Open Library and its open data contributors — https://openlibrary.org
+- **Book cover art:** Google Books API — https://developers.google.com/books
 - **Typography:** Fraunces and Inter via Google Fonts
 - **UI components:** shadcn/ui (Radix UI primitives)
 - **Icons:** lucide-react
@@ -174,7 +175,7 @@ Design started mobile-first with a warm, literary aesthetic: cream paper tones, 
 
 Those findings drove specific revisions. I made the active shelf button fill with the primary color so the current state is unmistakable; I restricted the progress slider to books already on a reading or finished shelf; I confirmed Enter-to-search and surfaced a visible search button; I rebuilt the empty Home state with a single clear call-to-action and added quick-search chips on Discover for users who didn't know where to start. Each change was small, but together they removed the hesitation I had watched in testing. The most valuable lesson was that clarity often means removing an option rather than adding a label.
 
-On the technical side, the main challenge was integrating an external API cleanly. Open Library's search endpoint is generous and key-free, but book descriptions live on a separate Works endpoint and aren't returned with search results. I solved this with two serverless backend functions — one to search, one to fetch details — keeping the API calls server-side to avoid browser CORS problems and to keep the front end clean. The Book entity carries everything a reader cares about, and the detail page lazily fetches and stores a description only when it is first needed, so repeat visits are instant. Getting the auto-saving notes right took iteration: a debounce timer saves a few hundred milliseconds after the user stops typing, with a subtle "Saving…" indicator so the persistence is felt without being noisy.
+On the technical side, the main challenge was integrating an external API cleanly. Open Library's search endpoint is generous and key-free, but book descriptions live on a separate Works endpoint and aren't returned with search results. I solved this with three serverless backend functions — one to search, one to fetch details, and one to sync cover images — keeping the API calls server-side to avoid browser CORS problems and to keep the front end clean. Because Open Library's cover service proved unreliable, a dedicated component detects blank or broken cover images and falls back to a styled placeholder, while the sync function pulls real covers from the Google Books API using a key stored as a server secret. The Book entity carries everything a reader cares about, and the detail page lazily fetches and stores a description only when it is first needed, so repeat visits are instant. Getting the auto-saving notes right took iteration: a debounce timer saves a few hundred milliseconds after the user stops typing, with a subtle "Saving…" indicator so the persistence is felt without being noisy.
 
 The API and database support the experience in a way that a static demo could not. The Open Library API gives Shelf a catalog of millions of real books with real covers, so discovery feels genuine rather than canned. The database turns that discovery into ownership: a search result becomes a saved record, then a tracked read, then a rated, reflected-on memory. Without the API the app would be a closed list; without the database it would be a viewer with no memory. Together they make the act of reading something the app can hold onto.
 

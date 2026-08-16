@@ -41,11 +41,11 @@ export default function Readme() {
       <section>
         <H>Technical reference</H>
         <div className="mt-2">
-          <Row k="API used">Open Library API — Search endpoint (<code className="text-xs">openlibrary.org/search.json</code>) for discovering titles, and the Works endpoint for book descriptions and subjects. Accessed through two serverless backend functions (<code className="text-xs">searchBooks</code>, <code className="text-xs">getBookDetails</code>) to keep API calls server-side and avoid browser CORS issues.</Row>
+          <Row k="APIs used">Two external APIs. <strong>Open Library API</strong> — Search endpoint (<code className="text-xs">openlibrary.org/search.json</code>) for discovering titles, and the Works endpoint for book descriptions and subjects. <strong>Google Books API</strong> — the <code className="text-xs">volumes</code> endpoint for reliable book cover art, using a free API key stored as a server secret (<code className="text-xs">GOOGLE_BOOKS_API_KEY</code>). Accessed through three serverless backend functions (<code className="text-xs">searchBooks</code>, <code className="text-xs">getBookDetails</code>, <code className="text-xs">refreshBookCovers</code>) to keep API calls server-side and avoid browser CORS issues.</Row>
           <Row k="Database / storage">A persistent <code className="text-xs">Book</code> entity in the app's built-in database (Base44). Every saved book is a record holding shelf status, rating, progress, notes, and dates, created/updated/retrieved through the data layer.</Row>
           <Row k="Front-end framework">React with React Router for navigation, Tailwind CSS for styling, and Vite as the build tool.</Row>
           <Row k="Template / starter code">Built on the Base44 application scaffold, which provides the Vite + React + Tailwind project structure, authentication boilerplate, and shadcn/ui component library. No external PWA template was used.</Row>
-          <Row k="What was customized">All pages (Home, Discover, Shelf, Book Detail, Documentation), the navigation layout, the Book data model, both backend functions, the warm "literary" design system (custom color tokens, Fraunces + Inter typography), reading-progress tracking, auto-saving notes, star-rating component, and the full documentation section were designed and written for this project.</Row>
+          <Row k="What was customized">All pages (Home, Discover, Shelf, Book Detail, Documentation), the navigation layout, the Book data model, all three backend functions, the warm "literary" design system (custom color tokens, Fraunces + Inter typography), reading-progress tracking, auto-saving notes, star-rating component, the book-cover fallback component, and the full documentation section were designed and written for this project.</Row>
         </div>
       </section>
 
@@ -54,7 +54,7 @@ export default function Readme() {
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/85">
           <li>As a public app without per-user authentication, the shared bookshelf is visible to everyone — a real version would scope data to individual users.</li>
           <li>The PWA manifest uses a placeholder icon; a dedicated app icon set has not yet been generated.</li>
-          <li>Search results rely on the Open Library cover service, so titles without a registered cover show a styled placeholder.</li>
+          <li>Book covers are fetched from the Google Books API; titles with no registered cover show a styled placeholder. Cover URLs are synced server-side via the <code className="text-xs">refreshBookCovers</code> function.</li>
           <li>There is no offline caching beyond the browser default — a service worker could cache the shelf for offline reading.</li>
           <li>No sorting or filtering within the Discover search results.</li>
         </ul>
@@ -63,7 +63,8 @@ export default function Readme() {
       <section>
         <H>Credits</H>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/85">
-          <li><strong>Book data & covers:</strong> Open Library and its open data contributors — <a href="https://openlibrary.org" className="text-primary underline">openlibrary.org</a></li>
+          <li><strong>Book data & descriptions:</strong> Open Library and its open data contributors — <a href="https://openlibrary.org" className="text-primary underline">openlibrary.org</a></li>
+          <li><strong>Book cover art:</strong> Google Books API — <a href="https://developers.google.com/books" className="text-primary underline">developers.google.com/books</a></li>
           <li><strong>Typography:</strong> Fraunces and Inter via Google Fonts</li>
           <li><strong>UI components:</strong> shadcn/ui (Radix UI primitives)</li>
           <li><strong>Icons:</strong> lucide-react</li>
