@@ -5,6 +5,7 @@ import { BookOpen, CheckCircle2, Compass, Layers, Star } from "lucide-react";
 import BookCard from "@/components/BookCard";
 import BookCover from "@/components/BookCover";
 import ShelfBadge from "@/components/ShelfBadge";
+import ReadingCharts from "@/components/ReadingCharts";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -88,6 +89,9 @@ export default function Home() {
           );
         })}
       </section>
+
+      {/* Reading dashboard */}
+      <ReadingCharts books={books} />
 
       {/* Currently reading */}
       {reading.length > 0 && (
