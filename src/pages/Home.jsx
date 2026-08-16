@@ -6,7 +6,7 @@ import BookCard from "@/components/BookCard";
 import BookCover from "@/components/BookCover";
 import ShelfBadge from "@/components/ShelfBadge";
 import ReadingCharts from "@/components/ReadingCharts";
-import DocsPdfButton from "@/components/DocsPdfButton";
+
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -77,7 +77,6 @@ export default function Home() {
           </h1>
           <p className="mt-1 text-muted-foreground">Track, rate, and reflect on the books in your life.</p>
         </div>
-        <DocsPdfButton />
       </section>
 
       {/* Stats */}
