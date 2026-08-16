@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BookOpen, CheckCircle2, Compass, Layers, Star } from "lucide-react";
 import BookCard from "@/components/BookCard";
+import BookCover from "@/components/BookCover";
 import ShelfBadge from "@/components/ShelfBadge";
 
 export default function Home() {
@@ -103,13 +104,7 @@ export default function Home() {
                 className="flex items-center gap-4 rounded-xl border border-border/60 bg-card p-3 transition-all hover:shadow-md hover:border-primary/30"
               >
                 <div className="h-16 w-12 shrink-0 overflow-hidden rounded bg-muted">
-                  {book.cover_url ? (
-                    <img src={book.cover_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <BookOpen className="h-4 w-4 text-muted-foreground/40" />
-                    </div>
-                  )}
+                  <BookCover coverUrl={book.cover_url} title={book.title} iconClass="h-4 w-4" showTitle={false} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-heading text-sm font-semibold text-foreground line-clamp-1">{book.title}</h3>

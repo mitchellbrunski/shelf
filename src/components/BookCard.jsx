@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import BookCover from "@/components/BookCover";
 import ShelfBadge from "@/components/ShelfBadge";
 import StarRating from "@/components/StarRating";
 
@@ -13,21 +13,11 @@ export default function BookCard({ book, to, footer }) {
       className="group flex flex-col fade-in-up"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-muted shadow-sm ring-1 ring-border/60 transition-all duration-300 group-hover:shadow-lg group-hover:ring-primary/30 group-hover:-translate-y-1">
-        {cover ? (
-          <img
-            src={cover}
-            alt={`Cover of ${book.title}`}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4 text-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/40" />
-            <span className="font-heading text-xs font-medium leading-snug text-muted-foreground/70 line-clamp-4">
-              {book.title}
-            </span>
-          </div>
-        )}
+        <BookCover
+          coverUrl={cover}
+          title={book.title}
+          imgClassName="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
         {book.shelf && (
           <div className="absolute left-2 top-2">
             <ShelfBadge shelf={book.shelf} size="xs" />
